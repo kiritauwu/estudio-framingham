@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudio de Cohorte - Framingham</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        
+        body {
+            font-family: 'Space+Mono', monospace;
+            background-color: #0a0a0a;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .crt-overlay::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 50;
+            background-size: 100% 3px, 2px 100%;
+            pointer-events: none;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .animate-float { animation: floating 4s infinite ease-in-out; }
+        
+        .dots-bg {
+            background-image: radial-gradient(#3b82f6 1px, transparent 1px);
+            background-size: 25px 25px;
+        }
+
+        .canva-presentation {
+            aspect-ratio: 16 / 9;
+            width: 95vw;
+            max-width: 1200px;
+            max-height: 95vh;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 4px solid #3b82f6;
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .arcade-btn {
+            position: relative;
+            transition: all 0.1s;
+            border-bottom: 4px solid #000;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .arcade-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+        }
+
+        /* Ajuste para evitar que el texto se rompa en pantallas pequeñas */
+        .title-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div id="root" class="w-full flex justify-center"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const App = () => {
+            const [step, setStep] = useState(0);
+
+            const scenes = [
+                {
+                    label: "COHORTE INICIAL",
+                    color: "#3b82f6",
+                    art: (
+                        <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden p-4">
+                            <div className="absolute inset-0 dots-bg opacity-10"></div>
+                            <div className="flex gap-6 lg:gap-10 relative z-10 animate-float mb-4">
+                                <span className="text-6xl md:text-7xl lg:text-8xl">👥</span>
+                                <span className="text-6xl md:text-7xl lg:text-8xl">🏙️</span>
+                            </div>
+                            <div className="bg-[#f5f5dc] border-4 border-black px-6 md:px-10 py-3 md:py-4 -rotate-1 shadow-[6px_6px_0px_0px_#3b82f6]">
+                                <span className="text-5xl md:text-6xl lg:text-7xl font-black italic text-black tracking-tighter">5,209</span>
+                            </div>
+                            <div className="mt-4 bg-blue-600 text-white px-4 py-1 font-bold text-sm md:text-lg lg:text-xl uppercase tracking-tighter">Sujetos Sanos Seleccionados</div>
+                        </div>
+                    )
+                },
+                {
+                    label: "SEGUIMIENTO",
+                    color: "#f59e0b",
+                    art: (
+                        <div className="w-full h-full flex flex-col items-center justify-center relative px-6 md:px-10">
+                            <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10 relative z-10">
+                                <div className="text-7xl md:text-8xl lg:text-9xl animate-float">📅</div>
+                                <div className="flex flex-col items-center">
+                                    <div className="text-orange-500 text-4xl md:text-5xl font-black mb-1">➜</div>
+                                    <div className="text-white text-lg md:text-2xl font-bold tracking-widest border-b-2 border-orange-500 uppercase">Longitudinal</div>
+                                </div>
+                                <div className="text-7xl md:text-8xl lg:text-9xl p-4 md:p-6 bg-[#f5f5dc] border-4 border-orange-500 shadow-[8px_8px_0px_0px_#000]">🔬</div>
+                            </div>
+                            <p className="mt-6 md:mt-8 text-orange-200/80 font-bold text-xs md:text-sm lg:text-base uppercase tracking-[0.2em] text-center bg-orange-950/30 px-4 py-2 rounded">Seguimiento constante cada 2 años</p>
+                        </div>
+                    )
+                },
+                {
+                    label: "FACTORES RIESGO",
+                    color: "#ef4444",
+                    art: (
+                        <div className="w-full h-full flex flex-col items-center justify-center relative p-4">
+                            <div className="grid grid-cols-4 gap-3 md:gap-6 relative z-20">
+                                {['🚬', '🍔', '🩸', '📉'].map((emoji, i) => (
+                                    <div key={i} className="relative bg-[#f5f5dc] border-2 md:border-4 border-red-500 p-2 md:p-4 shadow-[4px_4px_0px_0px_#000]">
+                                        <span className="text-4xl md:text-6xl">{emoji}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                <div className="w-full h-12 md:h-16 bg-red-600 border-y-4 border-black -rotate-2 flex items-center justify-center shadow-lg">
+                                    <span className="text-white font-black text-2xl md:text-4xl lg:text-5xl tracking-widest uppercase italic">Variables de Exposición</span>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                },
+                {
+                    label: "INCIDENCIA",
+                    color: "#22c55e",
+                    art: (
+                        <div className="w-full h-full flex flex-col items-center justify-center relative px-6 md:px-8">
+                            <div className="relative mb-6 md:mb-8 flex flex-col items-center">
+                                <div className="text-7xl md:text-9xl animate-float mb-2 md:mb-4">📊</div>
+                                <div className="bg-white text-green-700 px-6 md:px-8 py-2 md:py-3 font-black text-3xl md:text-5xl border-4 border-black shadow-[8px_8px_0px_0px_#000]">EVIDENCIA</div>
+                            </div>
+                            <div className="text-white font-bold text-xs md:text-base lg:text-lg text-center max-w-2xl uppercase tracking-wider leading-relaxed bg-green-900/30 p-3 md:p-4 border-l-4 border-green-500">
+                                Concepto: El origen de los "Factores de Riesgo" modernos
+                            </div>
+                        </div>
+                    )
+                }
+            ];
+
+            return (
+                <div className="canva-presentation crt-overlay" style={{borderColor: scenes[step].color}}>
+                    
+                    {/* Header: Mejorado para legibilidad */}
+                    <div className="bg-[#f5f5dc] border-b-4 border-black p-3 md:p-4 flex justify-between items-center z-30">
+                        <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                            <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-black flex items-center justify-center rotate-3 shadow-[3px_3px_0px_0px_#3b82f6]">
+                                <span className="text-white font-black text-xl md:text-2xl">{step + 1}</span>
+                            </div>
+                            <h1 className="title-text text-xl md:text-3xl lg:text-4xl font-black italic uppercase text-black">
+                                {scenes[step].label}
+                            </h1>
+                        </div>
+                        <div className="hidden sm:flex flex-col items-end flex-shrink-0 ml-4">
+                            <div className="bg-black text-[#f5f5dc] px-2 py-0.5 md:px-3 md:py-1 font-black text-[10px] md:text-xs uppercase">Estudio Framingham</div>
+                            <div className="text-black font-bold text-[8px] md:text-[10px] tracking-widest mt-1 uppercase opacity-80 italic">Diseño de Cohorte</div>
+                        </div>
+                    </div>
+
+                    {/* Content: Área central */}
+                    <div className="flex-1 bg-[#080808] relative">
+                        {scenes[step].art}
+                    </div>
+
+                    {/* Footer: Controles limpios */}
+                    <div className="bg-black p-3 md:p-4 flex gap-3 md:gap-4 items-stretch z-30">
+                        <button 
+                            onClick={() => step > 0 && setStep(step - 1)}
+                            className={`arcade-btn px-4 md:px-8 py-2 md:py-3 bg-zinc-800 text-xs md:text-base ${step === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-zinc-700 text-white'}`}
+                        >
+                            ATRÁS
+                        </button>
+
+                        <button 
+                            onClick={() => setStep(prev => (prev === scenes.length - 1 ? 0 : prev + 1))}
+                            className="arcade-btn flex-1 py-2 md:py-3 text-white font-black text-sm md:text-xl tracking-widest transition-colors"
+                            style={{backgroundColor: scenes[step].color}}
+                        >
+                            {step === scenes.length - 1 ? "REINICIAR ANÁLISIS" : "SIGUIENTE FASE ➜"}
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
