@@ -20,6 +20,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            width: 100vw;
             overflow: hidden;
         }
 
@@ -48,16 +49,14 @@
 
         .canva-presentation {
             aspect-ratio: 16 / 9;
-            width: 95vw;
-            max-width: 1200px;
-            max-height: 95vh;
+            width: 100vw;
+            height: 100vh;
             background-color: #000;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             border: 4px solid #3b82f6;
-            box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
         }
 
         .arcade-btn {
@@ -73,7 +72,6 @@
             border-bottom-width: 1px;
         }
 
-        /* Ajuste para evitar que el texto se rompa en pantallas pequeñas */
         .title-text {
             white-space: nowrap;
             overflow: hidden;
@@ -82,7 +80,7 @@
     </style>
 </head>
 <body>
-    <div id="root" class="w-full flex justify-center"></div>
+    <div id="root" class="w-full h-full flex justify-center items-center"></div>
 
     <script type="text/babel">
         const { useState } = React;
@@ -165,7 +163,6 @@
             return (
                 <div className="canva-presentation crt-overlay" style={{borderColor: scenes[step].color}}>
                     
-                    {/* Header: Mejorado para legibilidad */}
                     <div className="bg-[#f5f5dc] border-b-4 border-black p-3 md:p-4 flex justify-between items-center z-30">
                         <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
                             <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-black flex items-center justify-center rotate-3 shadow-[3px_3px_0px_0px_#3b82f6]">
@@ -181,12 +178,10 @@
                         </div>
                     </div>
 
-                    {/* Content: Área central */}
                     <div className="flex-1 bg-[#080808] relative">
                         {scenes[step].art}
                     </div>
 
-                    {/* Footer: Controles limpios */}
                     <div className="bg-black p-3 md:p-4 flex gap-3 md:gap-4 items-stretch z-30">
                         <button 
                             onClick={() => step > 0 && setStep(step - 1)}
@@ -200,7 +195,7 @@
                             className="arcade-btn flex-1 py-2 md:py-3 text-white font-black text-sm md:text-xl tracking-widest transition-colors"
                             style={{backgroundColor: scenes[step].color}}
                         >
-                            {step === scenes.length - 1 ? "REINICIAR ANÁLISIS" : "SIGUIENTE FASE ➜"}
+                            {step === scenes.length - 1 ? "REINICIAR" : "SIGUIENTE ➜"}
                         </button>
                     </div>
                 </div>
@@ -211,5 +206,4 @@
         root.render(<App />);
     </script>
 </body>
-</html>
 </html>
